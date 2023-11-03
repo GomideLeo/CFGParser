@@ -1,0 +1,10 @@
+S: A\\\B'\
+S: \A'\\\B
+A: a
+A: Aa
+A':
+A': Aa
+B: b
+B: Bb
+B': 
+B': Bb
