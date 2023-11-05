@@ -1,7 +1,8 @@
 import string
 
+
 class ContextFreeGrammar:
-    separator_symbol = "\\"
+    separator_symbol = '\\'
 
     def __init__(self, V=set(), Sigma=set(), P=[], s: str = None):
         self.V = V
@@ -15,7 +16,7 @@ class ContextFreeGrammar:
 
         with open(in_file) as g:
             while l := g.readline():
-                v, w = l.split(":")
+                v, w = l.split(':')
                 w = w.strip()
 
                 if cfg.s is None:
@@ -26,8 +27,8 @@ class ContextFreeGrammar:
         return cfg
 
     def __str__(self):
-        sorted_V = sorted(self.V, key=lambda v: v if v != self.s else "")
-        productions = "\n\t".join(
+        sorted_V = sorted(self.V, key=lambda v: v if v != self.s else '')
+        productions = '\n\t'.join(
             [
                 f'{v} -> {" | ".join(map(lambda w: "".join(w), p))}'
                 for v, p in filter(
@@ -37,7 +38,7 @@ class ContextFreeGrammar:
                             v,
                             list(
                                 map(
-                                    lambda p: p[1] if p[1] != [] else "λ",
+                                    lambda p: p[1] if p[1] != [] else 'λ',
                                     filter(lambda p: p[0] == v, self.P),
                                 )
                             ),
@@ -55,7 +56,10 @@ class ContextFreeGrammar:
 
     def copy(self, copy_productions=True):
         return ContextFreeGrammar(
-            self.V, self.Sigma, self.P if copy_productions else set(), self.s
+            self.V,
+            self.Sigma,
+            [(p[0], [*p[1]]) for p in self.P] if copy_productions else [],
+            self.s,
         )
 
     def addProduction(self, v, w, remove_from_Sigma=False):
@@ -87,7 +91,7 @@ class ContextFreeGrammar:
                 )
             ) == -1:
                 raise Exception(
-                    f"Invalid sentence {sentence} - separator does not end."
+                    f'Invalid sentence {sentence} - separator does not end.'
                 )
 
             if splitStart + 1 == splitEnd:
@@ -233,9 +237,9 @@ class ContextFreeGrammar:
 
         return cfg
 
-    def add_new_start(self, start_v="S"):
+    def add_new_start(self, start_v='S'):
         def suffix_generator():
-            yield ""
+            yield ''
             yield "'"
 
             n = 1
@@ -252,11 +256,11 @@ class ContextFreeGrammar:
                 cfg.V.add(new_s)
                 cfg.s = new_s
                 return cfg
-            
-    # remove productions with more than one terminal variables or mixed terminals and non-terminals 
-    def remove_terminal_productions(self, possible_Vs:list=None):
+
+    # remove productions with more than one terminal variables or mixed terminals and non-terminals
+    def add_terminal_productions(self, possible_Vs: list = None):
         def suffix_generator():
-            yield ""
+            yield ''
             yield "'"
 
             n = 1
@@ -275,16 +279,88 @@ class ContextFreeGrammar:
                 for v in Vs:
                     yield v + suffix
 
-        terminal_productions = []
         generator = V_generator(possible_Vs)
         cfg = self.copy()
+        terminal_productions = list(
+            filter(
+                lambda p: len(p[1]) == 1
+                and p[1][0] in cfg.Sigma
+                and len(list(filter(lambda q: q[0] == p[0], cfg.P))) == 1,
+                cfg.P,
+            )
+        )
 
-        for i, p in enumerate(cfg.P):
-            if len(p) > 1:
-                for ip, s in enumerate(p):
+        for p in cfg.P:
+            if len(p[1]) > 1:
+                for i, s in enumerate(p[1]):
                     if s in self.Sigma:
-                        
-                        p[ip]
+                        if not (
+                            terminal_p := next(
+                                (p for p in terminal_productions if p[1][0] == s), False
+                            )
+                        ):
+                            for new_v in generator:
+                                if new_v not in cfg.V and new_v not in cfg.Sigma:
+                                    terminal_p = (new_v, [s])
+                                    cfg.P.append(terminal_p)
+                                    terminal_productions.append(terminal_p)
+                                    cfg.V.add(new_v)
+                                    break
+                        p[1][i] = terminal_p[0]
+
+        return cfg
+
+    def remove_long_productions(self, possible_Vs: list = None):
+        def suffix_generator():
+            yield ''
+            yield "'"
+
+            n = 1
+            while True:
+                yield str(n)
+                n += 1
+
+        def V_generator(possible_Vs):
+            if possible_Vs is not None:
+                Vs = possible_Vs
+            else:
+                Vs = list(string.ascii_uppercase)
+                Vs.reverse()
+
+            for suffix in suffix_generator():
+                for v in Vs:
+                    yield v + suffix
+
+        generator = V_generator(possible_Vs)
+        cfg = self.copy()
+        short_productions = []
+
+        while long_p := next((p for p in enumerate(cfg.P) if len(p[1][1]) > 2), False):
+            i, p = long_p
+            while len(p[1]) > 2:
+                substitute_vars = p[1][-2:]
+                if not (
+                    short_p := next(
+                        (
+                            sp
+                            for sp in short_productions
+                            if sp[1][0] == substitute_vars[0]
+                            and sp[1][1] == substitute_vars[1]
+                        ),
+                        False,
+                    )
+                ):
+                    for new_v in generator:
+                        if new_v not in cfg.V and new_v not in cfg.Sigma:
+                            short_p = (new_v, substitute_vars)
+                            cfg.P.append(short_p)
+                            short_productions.append(short_p)
+                            cfg.V.add(new_v)
+                            break
+                p = (p[0], [*p[1][:-2], short_p[0]])
+            cfg.P[i] = p
+
+        return cfg
 
     # https://www.javatpoint.com/automata-chomskys-normal-form
     def chomskyfy(self, remove_useless=True, always_add_start=False):
@@ -305,5 +381,7 @@ class ContextFreeGrammar:
 
         chomsky_cfg = chomsky_cfg.remove_lambda_productions()
         chomsky_cfg = chomsky_cfg.remove_unit_productions()
+        chomsky_cfg = chomsky_cfg.add_terminal_productions()
+        chomsky_cfg = chomsky_cfg.remove_long_productions()
 
         return chomsky_cfg
