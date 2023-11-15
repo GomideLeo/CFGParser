@@ -1,5 +1,6 @@
 import string
 from CFG import ContextFreeGrammar
+import sys
 
 
 class ChomskyNormalForm(ContextFreeGrammar):
@@ -34,7 +35,7 @@ class ChomskyNormalForm(ContextFreeGrammar):
         chomsky_cfg = chomsky_cfg.add_terminal_productions()
         chomsky_cfg = chomsky_cfg.remove_long_productions()
 
-        return ChomskyNormalForm(
+        return cls(
             set(chomsky_cfg.V),
             set(chomsky_cfg.Sigma),
             [(p[0], [*p[1]]) for p in chomsky_cfg.P],
@@ -45,6 +46,12 @@ class ChomskyNormalForm(ContextFreeGrammar):
         # check if word is in alphabet
         if any(map(lambda s: s not in self.Sigma, w)):
             return False
+        
+        if len(w) == 0:
+            if any(map(lambda p: p[0] == self.s and len(p[1])==0, self.P)):
+                return True
+            else:
+                return False
 
         T = [[[] for _ in w] for _ in w]
         n = len(w)
@@ -65,3 +72,31 @@ class ChomskyNormalForm(ContextFreeGrammar):
                             T[i][j].append(p)
 
         return self.s in set(map(lambda p: p[0], T[0][n - 1]))
+
+    def check_language(self, in_language_path, print_out=True):
+        language_in_grammar = True
+        print_values = True
+
+        out_f = sys.stdout
+        if type(print_out) == str:
+            out_f = open(print_out, 'w')
+        elif not print_out:
+            print_values = False
+
+        with open(in_language_path, 'r') as in_file:
+            while w := in_file.readline():
+                w = w.strip()
+
+                split_w = ContextFreeGrammar._split_sentence(w)
+                w_in_self = self.is_in_grammar(split_w)
+                language_in_grammar = language_in_grammar and w_in_self
+
+                if not language_in_grammar and not print_values:
+                    return language_in_grammar
+                else:
+                    print(f'{w if len(w) > 0 else "λ"}:{w_in_self}', file=out_f)
+
+        if type(print_out) == str:
+            out_f.close()
+
+        return language_in_grammar
