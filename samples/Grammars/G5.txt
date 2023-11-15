@@ -1,7 +1,10 @@
 S:aaB
 S:abA
+S:baA
 S:aaS
 A:aA
+A:a
 B:ab
+B:ba
 B:b
 C:ad
