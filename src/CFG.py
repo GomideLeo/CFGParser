@@ -56,8 +56,8 @@ class ContextFreeGrammar:
 
     def copy(self, copy_productions=True):
         return ContextFreeGrammar(
-            self.V,
-            self.Sigma,
+            set(self.V),
+            set(self.Sigma),
             [(p[0], [*p[1]]) for p in self.P] if copy_productions else [],
             self.s,
         )
@@ -154,7 +154,7 @@ class ContextFreeGrammar:
             )
         )
 
-        used_symbols = set(simplified_cfg.s)
+        used_symbols = set([simplified_cfg.s])
         explore_queue = [simplified_cfg.s]
         while len(explore_queue) > 0:
             v = explore_queue.pop(0)
@@ -248,8 +248,9 @@ class ContextFreeGrammar:
                 n += 1
 
         cfg = self.copy()
+        generator = suffix_generator()
 
-        for suffix in suffix_generator():
+        for suffix in generator:
             new_s = start_v + suffix
             if new_s not in cfg.V and new_s not in cfg.Sigma:
                 cfg.P.append((new_s, [cfg.s]))
@@ -361,27 +362,3 @@ class ContextFreeGrammar:
             cfg.P[i] = p
 
         return cfg
-
-    # https://www.javatpoint.com/automata-chomskys-normal-form
-    def chomskyfy(self, remove_useless=True, always_add_start=False):
-        chomsky_cfg = self.copy()
-
-        if remove_useless:
-            chomsky_cfg = chomsky_cfg.remove_duplicate_productins()
-            chomsky_cfg = chomsky_cfg.remove_useless_productions()
-
-        # only add new start if it is in the RHS
-        if always_add_start:
-            chomsky_cfg = chomsky_cfg.add_new_start()
-        else:
-            for p in chomsky_cfg.P:
-                if any(map(lambda s: s == chomsky_cfg.s, p[1])):
-                    chomsky_cfg = chomsky_cfg.add_new_start()
-                    break
-
-        chomsky_cfg = chomsky_cfg.remove_lambda_productions()
-        chomsky_cfg = chomsky_cfg.remove_unit_productions()
-        chomsky_cfg = chomsky_cfg.add_terminal_productions()
-        chomsky_cfg = chomsky_cfg.remove_long_productions()
-
-        return chomsky_cfg
