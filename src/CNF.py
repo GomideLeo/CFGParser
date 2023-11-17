@@ -1,4 +1,3 @@
-import string
 from CFG import ContextFreeGrammar
 import sys
 
@@ -42,13 +41,13 @@ class ChomskyNormalForm(ContextFreeGrammar):
             chomsky_cfg.s,
         )
 
-    def is_in_grammar(self, w: list):
+    def is_in_language(self, w: list):
         # check if word is in alphabet
         if any(map(lambda s: s not in self.Sigma, w)):
             return False
-        
+
         if len(w) == 0:
-            if any(map(lambda p: p[0] == self.s and len(p[1])==0, self.P)):
+            if any(map(lambda p: p[0] == self.s and len(p[1]) == 0, self.P)):
                 return True
             else:
                 return False
