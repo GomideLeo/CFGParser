@@ -41,7 +41,7 @@ class ChomskyNormalForm(ContextFreeGrammar):
             chomsky_cfg.s,
         )
 
-    def is_in_language(self, w: list):
+    def is_in_language(self, w: list, return_table=False):
         # check if word is in alphabet
         if any(map(lambda s: s not in self.Sigma, w)):
             return False
@@ -70,6 +70,9 @@ class ChomskyNormalForm(ContextFreeGrammar):
                         ):
                             T[i][j].append(p)
 
+        if return_table:
+            self.s in set(map(lambda p: p[0], T[0][n - 1])), T
+        
         return self.s in set(map(lambda p: p[0], T[0][n - 1]))
 
     def check_language(self, in_language_path, print_out=True):
@@ -87,7 +90,7 @@ class ChomskyNormalForm(ContextFreeGrammar):
                 w = w.strip()
 
                 split_w = ContextFreeGrammar._split_sentence(w)
-                w_in_self = self.is_in_grammar(split_w)
+                w_in_self = self.is_in_language(split_w)
                 language_in_grammar = language_in_grammar and w_in_self
 
                 if not language_in_grammar and not print_values:

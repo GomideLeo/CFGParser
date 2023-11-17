@@ -83,36 +83,52 @@ class BinaryNormalForm(ContextFreeGrammar):
 
         return unit_relation
 
-    def find_inverse_unit_relation(self):
+    def find_inverse_unit_graph(self):
+        def Ugstar(w):
+            reacheable = set(w)
+            queue = [*w]
+
+            while len(queue) > 0:
+                v = queue.pop()
+                reacheable_from_v = inverse_unit_relation[v]
+                for v1 in reacheable_from_v:
+                    if v1 not in reacheable:
+                        queue.append(v1)
+                        reacheable.add(v1)
+            
+            return reacheable
+
         unit_relation = self.find_unit_relation()
-        inverse_unit_relation = {v: set() for v in [*self.V, *self.Sigma]}
+        V = [*self.V, *self.Sigma]
+        inverse_unit_relation = {v: set() for v in V}
 
         for y in unit_relation:
             for A in unit_relation[y]:
                 inverse_unit_relation[A].add(y)
 
-        return inverse_unit_relation
+        return V, inverse_unit_relation, Ugstar
 
-    def is_in_language(self, w: list):
+    def is_in_language(self, w: list, return_table=False):
         # check if word is in alphabet
         if any(map(lambda s: s not in self.Sigma, w)):
             return False
 
         # Check if lambda is in language
         if len(w) == 0:
-            if any(map(lambda p: p[0] == self.s and len(p[1]) == 0, self.P)):
+            nullable = self.find_nullable()
+            if self.s in nullable:
                 return True
             else:
                 return False
 
-        Ug = self.find_inverse_unit_relation()
+        _, _, Ug = self.find_inverse_unit_graph()
 
         T = [[None for _ in w] for _ in w]
         Tprime = [[None for _ in w] for _ in w]
         n = len(w)
 
         for i, s in enumerate(w):
-            T[i][i] = set(Ug[s])
+            T[i][i] = set(Ug([s]))
 
         for j in range(1, n):
             for i in reversed(range(j)):
@@ -122,15 +138,13 @@ class BinaryNormalForm(ContextFreeGrammar):
                         A = p[0]
                         y = p[1][0]
                         z = p[1][1]
-                        if (y in T[i][h] or y in set(*[Ug[s] for s in T[i][h]])) and (
-                            z in T[h + 1][j] or z in set(*[Ug[s] for s in T[h + 1][j]])
-                        ):
+                        if y in T[i][h] and z in T[h + 1][j]:
                             Tprime[i][j].add(A)
-                T[i][j] = set()
-                for t in Tprime[i][j]:
-                    for s in Ug[t]:
-                        T[i][j].add(s)
+                T[i][j] = Ug(Tprime[i][j])
 
+        if return_table:
+            self.s in set(map(lambda p: p[0], T[0][n - 1])), T
+        
         return self.s in T[0][n - 1]
 
     def check_language(self, in_language_path, print_out=True):
@@ -148,7 +162,7 @@ class BinaryNormalForm(ContextFreeGrammar):
                 w = w.strip()
 
                 split_w = ContextFreeGrammar._split_sentence(w)
-                w_in_self = self.is_in_grammar(split_w)
+                w_in_self = self.is_in_language(split_w)
                 language_in_grammar = language_in_grammar and w_in_self
 
                 if not language_in_grammar and not print_values:

@@ -50,16 +50,16 @@ def _count(w, s):
 
 
 if __name__ == '__main__':
-    generateLanguage(file_path=os.path.join(OUT_DIR, "abstar.txt"))
+    generateLanguage(file_path=os.path.join(OUT_DIR, "abstar.txt"), sigma=['a', 'b'])
     generateLanguage(
         rules=lambda w: _count(w, '0') == _count(w, '1')
         and ('0' not in w[w.index('1') :] if '1' in w else True),
-        sigma={'0', '1'},
+        sigma=['0', '1'],
         file_path=os.path.join(OUT_DIR, "0n1n.txt"),
     )
     generateLanguage(
         rules=lambda w: all([s == w[-(i + 1)] for i, s in enumerate(w)]),
-        sigma={'0', '1'},
+        sigma=['0', '1'],
         file_path=os.path.join(OUT_DIR, "01palindrome.txt"),
     )
     generateLanguage(
@@ -70,6 +70,11 @@ if __name__ == '__main__':
             if '\\' in w
             else False)
         ),
-        sigma={'b', 'a', '\\'},
+        sigma=['a', 'b', '\\'],
         file_path=os.path.join(OUT_DIR, "astarbstarlen1.txt"),
+    )
+    generateLanguage(
+        rules=lambda w: _count(w, 'a') > 0,
+        sigma=['a', 'b'],
+        file_path=os.path.join(OUT_DIR, "hasa.txt"),
     )
