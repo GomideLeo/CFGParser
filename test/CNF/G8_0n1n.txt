@@ -1,0 +1,7 @@
+λ:False
+01:True
+0011:True
+000111:False
+00001111:False
+total: 5 - success: 2 - failed: 3
+Some sentence failed.

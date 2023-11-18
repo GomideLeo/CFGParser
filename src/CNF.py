@@ -72,12 +72,15 @@ class ChomskyNormalForm(ContextFreeGrammar):
 
         if return_table:
             self.s in set(map(lambda p: p[0], T[0][n - 1])), T
-        
+
         return self.s in set(map(lambda p: p[0], T[0][n - 1]))
 
     def check_language(self, in_language_path, print_out=True):
         language_in_grammar = True
         print_values = True
+        success = 0
+        failed = 0
+        total = 0
 
         out_f = sys.stdout
         if type(print_out) == str:
@@ -88,6 +91,7 @@ class ChomskyNormalForm(ContextFreeGrammar):
         with open(in_language_path, 'r') as in_file:
             while w := in_file.readline():
                 w = w.strip()
+                total += 1
 
                 split_w = ContextFreeGrammar._split_sentence(w)
                 w_in_self = self.is_in_language(split_w)
@@ -96,8 +100,19 @@ class ChomskyNormalForm(ContextFreeGrammar):
                 if not language_in_grammar and not print_values:
                     return language_in_grammar
                 else:
+                    success += 1 if w_in_self else 0
+                    failed += 0 if w_in_self else 1
                     print(f'{w if len(w) > 0 else "λ"}:{w_in_self}', file=out_f)
 
+        if print_values:
+            print(f'total: {total} - success: {success} - failed: {failed}', file=out_f)
+            print(
+                'All in grammar language.'
+                if language_in_grammar
+                else 'Some sentence failed.',
+                file=out_f,
+            )
+            
         if type(print_out) == str:
             out_f.close()
 

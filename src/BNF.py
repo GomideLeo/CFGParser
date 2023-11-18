@@ -13,7 +13,7 @@ class BinaryNormalForm(ContextFreeGrammar):
     def from_CFG(
         cls,
         cfg: ContextFreeGrammar,
-        remove_useless=True,
+        remove_useless=False,
         always_add_start=False,
         remove_lambdas=False,
     ):
@@ -83,7 +83,7 @@ class BinaryNormalForm(ContextFreeGrammar):
 
         return unit_relation
 
-    def find_inverse_unit_graph(self):
+    def find_inverse_unit_graph(self, precalculate=False):
         def Ugstar(w):
             reacheable = set(w)
             queue = [*w]
@@ -95,7 +95,7 @@ class BinaryNormalForm(ContextFreeGrammar):
                     if v1 not in reacheable:
                         queue.append(v1)
                         reacheable.add(v1)
-            
+
             return reacheable
 
         unit_relation = self.find_unit_relation()
@@ -106,6 +106,8 @@ class BinaryNormalForm(ContextFreeGrammar):
             for A in unit_relation[y]:
                 inverse_unit_relation[A].add(y)
 
+        if precalculate:
+            return V, inverse_unit_relation, {v: Ugstar([v]) for v in V}
         return V, inverse_unit_relation, Ugstar
 
     def is_in_language(self, w: list, return_table=False):
@@ -144,12 +146,15 @@ class BinaryNormalForm(ContextFreeGrammar):
 
         if return_table:
             self.s in set(map(lambda p: p[0], T[0][n - 1])), T
-        
+
         return self.s in T[0][n - 1]
 
     def check_language(self, in_language_path, print_out=True):
         language_in_grammar = True
         print_values = True
+        success = 0
+        failed = 0
+        total = 0
 
         out_f = sys.stdout
         if type(print_out) == str:
@@ -160,6 +165,7 @@ class BinaryNormalForm(ContextFreeGrammar):
         with open(in_language_path, 'r') as in_file:
             while w := in_file.readline():
                 w = w.strip()
+                total += 1
 
                 split_w = ContextFreeGrammar._split_sentence(w)
                 w_in_self = self.is_in_language(split_w)
@@ -168,7 +174,18 @@ class BinaryNormalForm(ContextFreeGrammar):
                 if not language_in_grammar and not print_values:
                     return language_in_grammar
                 else:
+                    success += 1 if w_in_self else 0
+                    failed += 0 if w_in_self else 1
                     print(f'{w if len(w) > 0 else "λ"}:{w_in_self}', file=out_f)
+
+        if print_values:
+            print(f'total: {total} - success: {success} - failed: {failed}', file=out_f)
+            print(
+                'All in grammar language.'
+                if language_in_grammar
+                else 'Some sentence failed.',
+                file=out_f,
+            )
 
         if type(print_out) == str:
             out_f.close()
