@@ -39,6 +39,14 @@ class BinaryNormalForm(ContextFreeGrammar):
             binary_cfg.s,
         )
 
+    def copy(self, copy_productions=True):
+        return BinaryNormalForm(
+            set(self.V),
+            set(self.Sigma),
+            [(p[0], [*p[1]]) for p in self.P] if copy_productions else [],
+            self.s,
+        )
+
     def find_nullable(self):
         nullable = set()
         todo = set()

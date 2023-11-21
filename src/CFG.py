@@ -12,7 +12,7 @@ class ContextFreeGrammar:
 
     @classmethod
     def from_file(cls, in_file):
-        cfg = cls(V=set(), Sigma=set(), P=[], s=None)
+        cfg = ContextFreeGrammar(V=set(), Sigma=set(), P=[], s=None)
 
         with open(in_file) as g:
             while l := g.readline():

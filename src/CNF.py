@@ -41,6 +41,14 @@ class ChomskyNormalForm(ContextFreeGrammar):
             chomsky_cfg.s,
         )
 
+    def copy(self, copy_productions=True):
+        return ChomskyNormalForm(
+            set(self.V),
+            set(self.Sigma),
+            [(p[0], [*p[1]]) for p in self.P] if copy_productions else [],
+            self.s,
+        )
+
     def is_in_language(self, w: list, return_table=False):
         # check if word is in alphabet
         if any(map(lambda s: s not in self.Sigma, w)):
@@ -112,7 +120,7 @@ class ChomskyNormalForm(ContextFreeGrammar):
                 else 'Some sentence failed.',
                 file=out_f,
             )
-            
+
         if type(print_out) == str:
             out_f.close()
 
