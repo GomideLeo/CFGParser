@@ -1,0 +1,37 @@
+a\\:True
+\\b:True
+aa\\:True
+a\\b:False
+\\bb:True
+aaa\\:True
+aa\\b:True
+a\\bb:True
+\\bbb:True
+aaaa\\:True
+aaa\\b:True
+aa\\bb:True
+a\\bbb:True
+\\bbbb:True
+aaaaa\\:True
+aaaa\\b:True
+aaa\\bb:True
+aa\\bbb:True
+a\\bbbb:True
+\\bbbbb:True
+aaaaaa\\:True
+aaaaa\\b:True
+aaaa\\bb:True
+aaa\\bbb:True
+aa\\bbbb:True
+a\\bbbbb:True
+\\bbbbbb:True
+aaaaaaa\\:True
+aaaaaa\\b:True
+aaaaa\\bb:True
+aaaa\\bbb:True
+aaa\\bbbb:True
+aa\\bbbbb:True
+a\\bbbbbb:True
+\\bbbbbbb:True
+total: 35 - success: 34 - failed: 1
+Some sentence failed.

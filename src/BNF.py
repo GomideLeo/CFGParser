@@ -166,7 +166,7 @@ class BinaryNormalForm(ContextFreeGrammar):
 
         out_f = sys.stdout
         if type(print_out) == str:
-            out_f = open(print_out, 'w')
+            out_f = open(print_out, 'w', encoding="utf-8")
         elif not print_out:
             print_values = False
 

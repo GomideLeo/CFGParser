@@ -1,0 +1,8 @@
+S:ASA:False
+S:aB:False
+A:B:False
+A:S:False
+B:b:False
+B::False
+total: 6 - success: 0 - failed: 6
+Some sentence failed.

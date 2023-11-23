@@ -1,0 +1,8 @@
+E:E+T:False
+E:T:False
+T:T*F:False
+T:F:False
+F:(E):False
+F:t:False
+total: 6 - success: 0 - failed: 6
+Some sentence failed.

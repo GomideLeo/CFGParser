@@ -205,6 +205,8 @@ class ContextFreeGrammar:
                 for i, s in enumerate(p[1]):
                     if s in lambda_vars:
                         new_p = (p[0], [*p[1][:i], *p[1][i + 1 :]])
+                        if new_p[0] == s and len(new_p[1]) == 0:
+                            continue
                         if not ContextFreeGrammar._is_duplicate(new_p, non_lambda):
                             non_lambda.append(new_p)
 

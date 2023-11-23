@@ -1,0 +1,7 @@
+λ:True
+01:True
+0011:True
+000111:True
+00001111:True
+total: 5 - success: 5 - failed: 0
+All in grammar language.

@@ -1,0 +1,12 @@
+S:aaB:False
+S:abA:False
+S:baA:False
+S:aaS:False
+A:aA:False
+A:a:False
+B:ab:False
+B:ba:False
+B:b:False
+C:ad:False
+total: 10 - success: 0 - failed: 10
+Some sentence failed.
