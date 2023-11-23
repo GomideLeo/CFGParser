@@ -25,7 +25,7 @@ for g in glob.glob(os.path.join(GRAMMARS_DIR, '*.txt')):
     for l in glob.glob(os.path.join(LANGAGES_DIR, '*.txt')):
         l_name = l.split('\\')[-1].split('.')[0]
         accepted = cnf.check_language(
-            l, print_out=os.path.join(OUT_DIR, f'CNF/{g_name}_{l_name}.txt')
+            l, print_out=os.path.join(OUT_DIR, f'CNF', g_name, f'{l_name}.txt')
         )
 
         if PRINT_ACCEPTED_LANGUAGES:
@@ -52,7 +52,7 @@ for g in glob.glob(os.path.join(GRAMMARS_DIR, '*.txt')):
     for l in glob.glob(os.path.join(LANGAGES_DIR, '*.txt')):
         l_name = l.split('\\')[-1].split('.')[0]
         accepted = bnf.check_language(
-            l, print_out=os.path.join(OUT_DIR, f'BNF/{g_name}_{l_name}.txt')
+            l, print_out=os.path.join(OUT_DIR, 'BNF', g_name, f'{l_name}.txt')
         )
 
         if PRINT_ACCEPTED_LANGUAGES:

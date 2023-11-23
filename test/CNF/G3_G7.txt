@@ -1,7 +1,0 @@
-S:XYX:False
-X:0X:False
-X::False
-Y:1Y:False
-Y::False
-total: 5 - success: 0 - failed: 5
-Some sentence failed.

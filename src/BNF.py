@@ -1,6 +1,6 @@
 import sys
 from CFG import ContextFreeGrammar
-
+import os
 
 class BinaryNormalForm(ContextFreeGrammar):
     def __init__(self, V=set(), Sigma=set(), P=[], s: str = None):
@@ -166,6 +166,9 @@ class BinaryNormalForm(ContextFreeGrammar):
 
         out_f = sys.stdout
         if type(print_out) == str:
+            directory, _ = os.path.split(print_out)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             out_f = open(print_out, 'w', encoding="utf-8")
         elif not print_out:
             print_values = False

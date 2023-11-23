@@ -1,5 +1,6 @@
 from CFG import ContextFreeGrammar
 import sys
+import os
 
 
 class ChomskyNormalForm(ContextFreeGrammar):
@@ -92,6 +93,9 @@ class ChomskyNormalForm(ContextFreeGrammar):
 
         out_f = sys.stdout
         if type(print_out) == str:
+            directory, _ = os.path.split(print_out)
+            if not os.path.exists(directory):
+                os.makedirs(directory)
             out_f = open(print_out, 'w', encoding="utf-8")
         elif not print_out:
             print_values = False
