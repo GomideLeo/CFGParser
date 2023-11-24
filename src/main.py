@@ -6,12 +6,12 @@ import glob
 import time
 import os
 
-PRINT_ACCEPTED_LANGUAGES = True
+PRINT_ACCEPTED_LANGUAGES = False
 GRAMMARS_DIR = './samples/Grammars'
 LANGAGES_DIR = './samples/Languages'
 OUT_DIR = './test'
 
-print('Testing CFG Parsing')
+print('Testing CNF Parsing')
 
 t0 = time.time()
 for g in glob.glob(os.path.join(GRAMMARS_DIR, '*.txt')):
@@ -25,7 +25,7 @@ for g in glob.glob(os.path.join(GRAMMARS_DIR, '*.txt')):
     for l in glob.glob(os.path.join(LANGAGES_DIR, '*.txt')):
         l_name = l.split('\\')[-1].split('.')[0]
         accepted = cnf.check_language(
-            l, print_out=os.path.join(OUT_DIR, f'CNF', g_name, f'{l_name}.txt')
+            l, print_out=os.path.join(OUT_DIR, 'CNF', g_name, f'{l_name}.txt')
         )
 
         if PRINT_ACCEPTED_LANGUAGES:
