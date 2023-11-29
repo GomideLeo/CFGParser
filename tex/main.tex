@@ -37,7 +37,6 @@
 
 \maketitle
 
-
 \section{Introdução}
 
 
@@ -67,9 +66,9 @@ $$\displaylines{
     P:
 }$$
 
-Essa gramática representa a escrita convencionalmente como:
+Essa gramática representa a gramática escrita convencionalmente como:
 
-$G: P \rightarrow 0P0 \mid 1P1 \mid 0 \mid 1 \mid \lambda$
+$$ G: P \rightarrow 0P0 \mid 1P1 \mid 0 \mid 1 \mid \lambda $$
 
 \subsection{Linguagens}
 
@@ -120,22 +119,40 @@ Tendo a 2NF e o grafo $(V, \breve \mathcal{U}_G)$, é possível implementar o CY
 
 \section{Experimentos}
 
-Como experimentos, foram definidas 12 gramáticas com alfabetos e linguagens reconhecidas distintas e foram gerados 8 arquivos de linguagem com o script de geração de linguagens. Para cada gramática tentamos reconhecer todas as sentenças de cada uma das linguagens e mostramos em tela se cada linguagem é reconhecida ou não.
+Como experimentos, foram definidas 13 gramáticas com alfabetos e linguagens reconhecidas distintas e foram gerados 8 arquivos de linguagem com o script de geração de linguagens. Para cada gramática tentamos reconhecer todas as sentenças de cada uma das linguagens e mostramos em tela se cada linguagem é reconhecida ou não.
 
 Na pasta \textit{test} são mostrados mais detalhes sobre o reconhecimento de cada linguagem por cada gramática, mostrando o resultado para cada sentença da linguagem e quantas sentenças foram aceitas e rejeitadas.
 
 \subsection{Resultados}
 
-Em nossa implementação a execução da conversão e teste das gramáticas executou nos tempos exibidos na figura \ref{fig:parsing}. É interessante notar que o CYK para 2NF executou mais rápido, apesar de ter que trabalhar com a estrutura adicional.
+Para testar nossa solução testamos o programa em três computadores para termos comparação do desempenho. Em cada computador o programa foi executado 5 vezes para podermos ter um limiar do tempo médio.
 
-\begin{figure}
+\begin{table}
+    \label{tab:table1}
     \centering
-    \includegraphics{parsing.png}
-    \caption{Teste das gramáticas}
-    \label{fig:parsing}
-\end{figure}
+    \begin{tabular}{|c|c|c|c|c|}
+        \hline
+        SO & Processador & Memória RAM & Tempo CNF & Tempo BNF \\
+        \hline
+        Windows 10 & Intel i5-7200 2 & 20GB & 14.694s & 5.646s \\
+        Windows 10 & Intel i5-8265 2 & 8GB & 14.406s & 5.958s \\
+        \textbf{MacOS} & \textbf{M2} & \textbf{16GB} & \textbf{6.040s} & \textbf{2.128s} \\
+        \hline
+    \end{tabular}
+    \caption{Tempo de execução em diferentes computadores.}
+    \label{tab:mytable}
+\end{table}
 
-% \section{Conclusão}
+Conforme constado na \ref{tab:table1}, o processador do \textit{M2} o desempenho foi bem superior aos processadores \textit{Intel}, enquanto ter mais ou menos memória RAM não aparentou ter grandes ganhos no desempenho. 
+
+Outro ponto que é interessante notar que o CYK para 2NF executou mais rápido, apesar de ter que trabalhar com a estrutura adicional.
+
+\section{Conclusão}
+Com os dados da sessão anterior podemos ver o ganho ao utilizar o método executado nas gramáticas no formato BNF, demonstrando que, apesar do maior gasto espacial, o método executa mais rápido que o que utiliza gramáticas CNF.
+
+Outro ponto interessante que podemos notar na sessão anterior é a importância do processador para o tempo de execução do programa. Pode-se notar que com a utilização do processador \textit{M2}, foi obtido o melhor resultado em ambas tarefas. Seria preciso mais testes e mais computadores, porém pode-se formular a hipótese que o principal gargalo do programa é o processamento e não a complexidade espacial, abrindo portas para trabalhos futuros que abordem paralelismo e 
+outras otimizações.
+
 
 \bibliographystyle{sbc}
 \bibliography{sbc-template}
